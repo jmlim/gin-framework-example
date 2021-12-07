@@ -21,6 +21,11 @@ func GetUserByEmail(c *gin.Context, email string) domain.User {
 	return user
 }
 
+func GetUsersByLastName(c *gin.Context, lastname string) []domain.User {
+	users := repo.FindUsersByLikeLastName(c, lastname)
+	return users
+}
+
 /**
 /*
 	var episodes []bson.M

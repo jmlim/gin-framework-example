@@ -5,6 +5,7 @@ import (
 	"gin-framework-example/db"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 )
@@ -64,4 +65,25 @@ func FindUserByEmail(c *gin.Context, email string) domain.User {
 		log.Fatal(err)
 	}
 	return user
+}
+
+func FindUsersByLikeLastName(c *gin.Context, lastName string) []domain.User {
+	var usersCollection = getUsersCollection()
+	cursor, err := usersCollection.Find(c, bson.M{"lastName": primitive.Regex{Pattern: lastName, Options: ""}})
+	defer cursor.Close(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	usersByName := []domain.User{}
+	for cursor.Next(c) {
+		var user domain.User
+		err := cursor.Decode(&user)
+		if err != nil {
+			log.Fatal(err)
+		}
+		usersByName = append(usersByName, user)
+	}
+
+	return usersByName
 }

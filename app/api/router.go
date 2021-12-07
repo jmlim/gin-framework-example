@@ -47,4 +47,13 @@ func UserRouter(router *gin.Engine) {
 		user := service.GetUserByEmail(c, email)
 		c.JSON(200, user)
 	})
+
+	/**
+	ex: 	http://localhost:5000/users/search?lastName=kylebanker2@gmail.com
+	*/
+	router.GET("/users/search", func(c *gin.Context) {
+		lastName := c.Query("lastName")
+		usersByLastName := service.GetUsersByLastName(c, lastName)
+		c.JSON(200, usersByLastName)
+	})
 }
