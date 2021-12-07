@@ -9,23 +9,59 @@ import (
 	"log"
 )
 
-func FindUserList(c *gin.Context) []domain.User {
+func getUsersCollection() *mongo.Collection {
 	var usersCollection *mongo.Collection = db.OpenCollection(db.Client, "users")
+	return usersCollection
+}
+
+func FindUsers(c *gin.Context) []domain.User {
+	var usersCollection = getUsersCollection()
 	cursor, err := usersCollection.Find(c, bson.M{})
 	defer cursor.Close(c)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	usersList := []domain.User{}
+	users := []domain.User{}
 	for cursor.Next(c) {
 		var user domain.User
 		err := cursor.Decode(&user)
 		if err != nil {
 			log.Fatal(err)
 		}
-		usersList = append(usersList, user)
+		users = append(users, user)
 	}
 
-	return usersList
+	return users
+}
+
+func FindUsersByName(c *gin.Context, name string) []domain.User {
+	var usersCollection = getUsersCollection()
+	cursor, err := usersCollection.Find(c, bson.M{"username": name})
+	defer cursor.Close(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	usersByName := []domain.User{}
+	for cursor.Next(c) {
+		var user domain.User
+		err := cursor.Decode(&user)
+		if err != nil {
+			log.Fatal(err)
+		}
+		usersByName = append(usersByName, user)
+	}
+
+	return usersByName
+}
+
+func FindUserByEmail(c *gin.Context, email string) domain.User {
+	var usersCollection = getUsersCollection()
+	var user domain.User
+	err := usersCollection.FindOne(c, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return user
 }

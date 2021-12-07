@@ -1,21 +1,24 @@
 package service
 
 import (
-	"fmt"
 	"gin-framework-example/app/domain"
 	"gin-framework-example/app/repo"
 	"github.com/gin-gonic/gin"
 )
 
-func GetUserList(c *gin.Context) []domain.User {
-	usersList := repo.FindUserList(c)
-	for key, value := range usersList {
-		fmt.Println("key : ", key,
-			", value.LastName: ", *value.LastName,
-			", value.Address[0].City : ", *value.Address[0].City,
-			", value.PaymentMethod[0].PaymentToken", *value.PaymentMethod[0].PaymentToken)
-	}
-	return usersList
+func GetUsers(c *gin.Context) []domain.User {
+	users := repo.FindUsers(c)
+	return users
+}
+
+func GetUsersByName(c *gin.Context, name string) []domain.User {
+	users := repo.FindUsersByName(c, name)
+	return users
+}
+
+func GetUserByEmail(c *gin.Context, email string) domain.User {
+	user := repo.FindUserByEmail(c, email)
+	return user
 }
 
 /**
