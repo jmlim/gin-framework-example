@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"gin-framework-example/app/common"
 	"gin-framework-example/app/domain"
 	"gin-framework-example/db"
 	"github.com/gin-gonic/gin"
@@ -128,4 +129,34 @@ func FindUsersByFirstNameEndsWith(c *gin.Context, firstName string) []domain.Use
 	}
 
 	return users
+}
+
+func FindUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M) domain.UserPaging {
+	var usersCollection = getUsersCollection()
+	var users []domain.User
+
+	projection := bson.D{
+		{"username", 1},
+		{"email", 1},
+		{"firstName", 1},
+		{"lastName", 1},
+		{"hashPassword", 1},
+		{"address", 1},
+		{"paymentMethod", 1},
+	}
+
+	paginatedData, err := common.New(usersCollection).Context(c).Limit(limit).Page(page).Sort("username", -1).Select(projection).Filter(filter).Decode(&users).Find()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var payload = struct {
+		Data       []domain.User         `json:"data"`
+		Pagination common.PaginationData `json:"pagination"`
+	}{
+		Pagination: paginatedData.Pagination,
+		Data:       users,
+	}
+
+	return payload
 }

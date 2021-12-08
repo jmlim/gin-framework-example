@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"gin-framework-example/app/service"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"net/http"
+	"strconv"
 )
 
 func UserRouter(router *gin.Engine) {
@@ -18,7 +21,7 @@ func UserRouter(router *gin.Engine) {
 				", value.PaymentMethod[0].PaymentToken", *value.PaymentMethod[0].PaymentToken)
 		}
 
-		c.JSON(200, users)
+		c.JSON(http.StatusOK, users)
 	})
 
 	/**
@@ -36,7 +39,7 @@ func UserRouter(router *gin.Engine) {
 				", value.PaymentMethod[0].PaymentToken", *value.PaymentMethod[0].PaymentToken)
 		}
 
-		c.JSON(200, users)
+		c.JSON(http.StatusOK, users)
 	})
 
 	/**
@@ -45,7 +48,7 @@ func UserRouter(router *gin.Engine) {
 	router.GET("/user/:email", func(c *gin.Context) {
 		email := c.Param("email")
 		user := service.GetUserByEmail(c, email)
-		c.JSON(200, user)
+		c.JSON(http.StatusOK, user)
 	})
 
 	/**
@@ -56,13 +59,38 @@ func UserRouter(router *gin.Engine) {
 		firstName := c.Query("firstName")
 		if lastName != "" {
 			usersByLastName := service.GetUsersByLastName(c, lastName)
-			c.JSON(200, usersByLastName)
+			c.JSON(http.StatusOK, usersByLastName)
 		} else if firstName != "" {
 			/*			usersByFirstNameStartsWith := service.GetUsersByFirstNameStartsWith(c, firstName)
-						c.JSON(200, usersByFirstNameStartsWith)*/
+						c.JSON(http.StatusOK, usersByFirstNameStartsWith)*/
 
 			usersByFirstNameEndsWith := service.GetUsersByFirstNameEndsWith(c, firstName)
-			c.JSON(200, usersByFirstNameEndsWith)
+			c.JSON(http.StatusOK, usersByFirstNameEndsWith)
 		}
 	})
+
+	router.GET("/users/paging-sample", func(c *gin.Context) {
+		convertedPageInt, convertedLimitInt := getPageAndLimit(c)
+
+		filter := bson.M{}
+		limit := int64(convertedLimitInt)
+		page := int64(convertedPageInt)
+		userPaging := service.GetUsersPagingSample(c, page, limit, filter)
+
+		c.JSON(http.StatusOK, userPaging)
+	})
+}
+
+func getPageAndLimit(c *gin.Context) (convertedPageInt int, convertedLimitInt int) {
+	queryPageValue := c.Query("page")
+	if queryPageValue != "" {
+		convertedPageInt, _ = strconv.Atoi(queryPageValue)
+	}
+
+	queryLimitValue := c.Query("limit")
+	if queryLimitValue != "" {
+		convertedLimitInt, _ = strconv.Atoi(queryLimitValue)
+	}
+
+	return convertedPageInt, convertedLimitInt
 }

@@ -4,6 +4,7 @@ import (
 	"gin-framework-example/app/domain"
 	"gin-framework-example/app/repo"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func GetUsers(c *gin.Context) []domain.User {
@@ -34,6 +35,11 @@ func GetUsersByFirstNameStartsWith(c *gin.Context, firstname string) []domain.Us
 func GetUsersByFirstNameEndsWith(c *gin.Context, firstname string) []domain.User {
 	users := repo.FindUsersByFirstNameEndsWith(c, firstname)
 	return users
+}
+
+func GetUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M) domain.UserPaging {
+	userPaging := repo.FindUsersPagingSample(c, page, limit, filter)
+	return userPaging
 }
 
 /**

@@ -1,10 +1,21 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"gin-framework-example/app/common"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Product struct
+type Product struct {
+	Id       primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
+	Name     string             `json:"name,omitempty" bson:"name"`
+	Quantity float64            `json:"quantity,omitempty" bson:"quantity"`
+	Price    float64            `json:"price,omitempty" bson:"price"`
+}
 
 type User struct {
 	ID            primitive.ObjectID `bson:"_id"`
-	Username      *string            `json:"name" validate:"required,min=2,max=50"`
+	Username      *string            `json:"username" validate:"required,min=2,max=50"`
 	Email         *string            `json:"email" validate:"required,min=2,max=100"`
 	FirstName     *string            `json:"firstName" validate:"required"`
 	LastName      *string            `json:"lastName" validate:"required"`
@@ -23,4 +34,9 @@ type Address struct {
 type PaymentMethod struct {
 	Name         *string `json:"name"`
 	PaymentToken *string `json:"paymentToken"`
+}
+
+type UserPaging struct {
+	Data       []User                `json:"data"`
+	Pagination common.PaginationData `json:"pagination"`
 }
