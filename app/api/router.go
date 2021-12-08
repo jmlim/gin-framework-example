@@ -53,7 +53,16 @@ func UserRouter(router *gin.Engine) {
 	*/
 	router.GET("/users/search", func(c *gin.Context) {
 		lastName := c.Query("lastName")
-		usersByLastName := service.GetUsersByLastName(c, lastName)
-		c.JSON(200, usersByLastName)
+		firstName := c.Query("firstName")
+		if lastName != "" {
+			usersByLastName := service.GetUsersByLastName(c, lastName)
+			c.JSON(200, usersByLastName)
+		} else if firstName != "" {
+			/*			usersByFirstNameStartsWith := service.GetUsersByFirstNameStartsWith(c, firstName)
+						c.JSON(200, usersByFirstNameStartsWith)*/
+
+			usersByFirstNameEndsWith := service.GetUsersByFirstNameEndsWith(c, firstName)
+			c.JSON(200, usersByFirstNameEndsWith)
+		}
 	})
 }

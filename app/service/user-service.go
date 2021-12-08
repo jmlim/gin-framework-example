@@ -26,6 +26,16 @@ func GetUsersByLastName(c *gin.Context, lastname string) []domain.User {
 	return users
 }
 
+func GetUsersByFirstNameStartsWith(c *gin.Context, firstname string) []domain.User {
+	users := repo.FindUsersByFirstNameStartsWith(c, firstname)
+	return users
+}
+
+func GetUsersByFirstNameEndsWith(c *gin.Context, firstname string) []domain.User {
+	users := repo.FindUsersByFirstNameEndsWith(c, firstname)
+	return users
+}
+
 /**
 /*
 	var episodes []bson.M

@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-
 // Client Database instance
 var Client *mongo.Client = DBinstance()
 
@@ -29,7 +28,13 @@ func DBinstance() *mongo.Client {
 
 	MongoDb := os.Getenv("MONGODB_URL")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb))
+	//MongoDB 드라이버는 커넥션 풀을 명시적으로 설정하지 않아도 커넥션 풀을 사용하고 기본 값이 MaxPoolSize 100, MinPoolSize 0 이다
+	clientOptions := options.Client().ApplyURI(MongoDb)
+	/**
+	clientOptions.SetMaxPoolSize(100)
+	clientOptions.SetMinPoolSize(0)
+	*/
+	client, err := mongo.NewClient(clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}

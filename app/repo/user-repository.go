@@ -44,17 +44,17 @@ func FindUsersByName(c *gin.Context, name string) []domain.User {
 		log.Fatal(err)
 	}
 
-	usersByName := []domain.User{}
+	users := []domain.User{}
 	for cursor.Next(c) {
 		var user domain.User
 		err := cursor.Decode(&user)
 		if err != nil {
 			log.Fatal(err)
 		}
-		usersByName = append(usersByName, user)
+		users = append(users, user)
 	}
 
-	return usersByName
+	return users
 }
 
 func FindUserByEmail(c *gin.Context, email string) domain.User {
@@ -75,15 +75,57 @@ func FindUsersByLikeLastName(c *gin.Context, lastName string) []domain.User {
 		log.Fatal(err)
 	}
 
-	usersByName := []domain.User{}
+	users := []domain.User{}
 	for cursor.Next(c) {
 		var user domain.User
 		err := cursor.Decode(&user)
 		if err != nil {
 			log.Fatal(err)
 		}
-		usersByName = append(usersByName, user)
+		users = append(users, user)
 	}
 
-	return usersByName
+	return users
+}
+
+func FindUsersByFirstNameStartsWith(c *gin.Context, firstName string) []domain.User {
+	var usersCollection = getUsersCollection()
+	cursor, err := usersCollection.Find(c, bson.M{"firstName": primitive.Regex{Pattern: "^" + firstName, Options: "i"}})
+	defer cursor.Close(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	users := []domain.User{}
+	for cursor.Next(c) {
+		var user domain.User
+		err := cursor.Decode(&user)
+		if err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, user)
+	}
+
+	return users
+}
+
+func FindUsersByFirstNameEndsWith(c *gin.Context, firstName string) []domain.User {
+	var usersCollection = getUsersCollection()
+	cursor, err := usersCollection.Find(c, bson.M{"firstName": primitive.Regex{Pattern: firstName + "$", Options: "i"}})
+	defer cursor.Close(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	users := []domain.User{}
+	for cursor.Next(c) {
+		var user domain.User
+		err := cursor.Decode(&user)
+		if err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, user)
+	}
+
+	return users
 }
