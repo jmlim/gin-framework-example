@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"gin-framework-example/app/service"
+	"gin-framework-example/websocket"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
@@ -10,6 +11,13 @@ import (
 )
 
 func UserRouter(router *gin.Engine) {
+	/**
+	웹 소켓
+	*/
+	router.GET("/ws", func(c *gin.Context) {
+		websocket.Wshandler(c.Writer, c.Request)
+	})
+
 	router.GET("/users", func(c *gin.Context) {
 		users := service.GetUsers(c)
 
