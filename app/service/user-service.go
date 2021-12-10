@@ -43,6 +43,10 @@ func GetUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M
 	return userPaging
 }
 
+func GetUsersPagingSample2(c *gin.Context, request domain.PageRequest, filter bson.M) (*domain.UserPageData, error) {
+	return repo.FindUsersPagingSample2(c, request, filter)
+}
+
 /**
 /*
 	var episodes []bson.M
