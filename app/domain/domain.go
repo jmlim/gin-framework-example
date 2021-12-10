@@ -35,12 +35,11 @@ type PaymentMethod struct {
 	PaymentToken *string `json:"paymentToken"`
 }
 
-
 type Page struct {
 	TotalElement int64
-	TotalPages int64
-	Offset int64
-	Last bool
+	TotalPages   int64
+	Offset       int64
+	Last         bool
 }
 
 type PageRequest struct {
@@ -48,9 +47,7 @@ type PageRequest struct {
 	Size int64
 }
 
-type UserPageData struct {
-	List []*User  `json:"list"`
-	Pagination *Page `json:"pagination"`
+type PageData struct {
+	List       interface{} `json:"list"`
+	Pagination *Page       `json:"pagination"`
 }
-
-

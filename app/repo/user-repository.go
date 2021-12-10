@@ -163,11 +163,12 @@ func FindUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.
 	return payload
 }
 
-func FindUsersPagingSample2(c *gin.Context, request domain.PageRequest, filter bson.M) (*domain.UserPageData, error) {
+func FindUsersPagingSample2(c *gin.Context, request domain.PageRequest, filter bson.M) (*domain.PageData, error) {
 	var users []*domain.User
 	var usersCollection = getUsersCollection()
 
 	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{"username", -1}})
 	findOptions.SetSkip((request.Page - 1) * request.Size)
 	findOptions.SetLimit(request.Size)
 
@@ -191,7 +192,7 @@ func FindUsersPagingSample2(c *gin.Context, request domain.PageRequest, filter b
 	}
 	page := getPage(totalCount, request)
 
-	return &domain.UserPageData{users, page}, nil
+	return &domain.PageData{users, page}, nil
 }
 
 func getPage(totalElement int64, request domain.PageRequest) *domain.Page {
