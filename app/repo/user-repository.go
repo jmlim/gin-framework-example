@@ -8,7 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"math"
 )
 
 func getUsersCollection() *mongo.Collection {
@@ -159,4 +161,53 @@ func FindUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.
 	}
 
 	return payload
+}
+
+func FindUsersPagingSample2(c *gin.Context, request domain.PageRequest, filter bson.M) (*domain.UserPageData, error) {
+	var users []*domain.User
+	var usersCollection = getUsersCollection()
+
+	findOptions := options.Find()
+	findOptions.SetSkip((request.Page - 1) * request.Size)
+	findOptions.SetLimit(request.Size)
+
+	cursor, err := usersCollection.Find(c, filter, findOptions)
+	defer cursor.Close(c)
+	if err != nil {
+		log.Printf("Find Error :  %v", err)
+		return nil, err
+	}
+
+	err = cursor.All(c, &users)
+	if err != nil {
+		log.Printf("Failed marshalling %v", err)
+		return nil, err
+	}
+
+	totalCount, err := usersCollection.CountDocuments(c, filter)
+	if err != nil {
+		log.Printf("CountDocuments Error: %v", err)
+		return nil, err
+	}
+	page := getPage(totalCount, request)
+
+	return &domain.UserPageData{users, page}, nil
+}
+
+func getPage(totalElement int64, request domain.PageRequest) *domain.Page {
+
+	if totalElement == 0 {
+		return nil
+	}
+
+	totalPages := int64(math.Ceil(float64(totalElement) / float64(request.Size)))
+	var last = false
+
+	if request.Page < totalPages {
+		last = false
+	} else {
+		last = true
+	}
+
+	return &domain.Page{totalElement, totalPages, request.Size, last}
 }

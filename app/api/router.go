@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"gin-framework-example/app/domain"
 	"gin-framework-example/app/service"
 	"gin-framework-example/websocket"
 	"github.com/gin-gonic/gin"
@@ -101,4 +102,19 @@ func getPageAndLimit(c *gin.Context) (convertedPageInt int, convertedLimitInt in
 	}
 
 	return convertedPageInt, convertedLimitInt
+}
+
+func GetUsers(router *gin.RouterGroup) {
+	router.GET("/", getPageUserList)
+}
+
+func getPageUserList(context *gin.Context) {
+	page, _ := strconv.Atoi(context.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(context.DefaultQuery("size", "10"))
+	filter := bson.M{}
+	data, err := service.GetUsersPagingSample2(context, domain.PageRequest{int64(page), int64(size)}, filter)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": err})
+	}
+	context.JSON(http.StatusOK, gin.H{"data": data})
 }
