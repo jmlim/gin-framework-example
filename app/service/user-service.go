@@ -1,6 +1,7 @@
 package service
 
 import (
+	"gin-framework-example/app/common"
 	"gin-framework-example/app/domain"
 	"gin-framework-example/app/repo"
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,7 @@ func GetUsersByFirstNameEndsWith(c *gin.Context, firstname string) []domain.User
 	return users
 }
 
-func GetUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M) domain.UserPaging {
+func GetUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M) common.PagingData {
 	userPaging := repo.FindUsersPagingSample(c, page, limit, filter)
 	return userPaging
 }

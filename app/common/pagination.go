@@ -25,6 +25,11 @@ type PaginationData struct {
 	TotalPage int64 `json:"totalPage"`
 }
 
+type PagingData struct {
+	Data       interface{}    `json:"data"`
+	Pagination PaginationData `json:"pagination"`
+}
+
 // PaginationData returns PaginationData struct which
 // holds information of all stats needed for pagination
 func (p *Paginator) PaginationData() *PaginationData {

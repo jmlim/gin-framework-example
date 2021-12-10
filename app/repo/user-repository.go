@@ -131,7 +131,7 @@ func FindUsersByFirstNameEndsWith(c *gin.Context, firstName string) []domain.Use
 	return users
 }
 
-func FindUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M) domain.UserPaging {
+func FindUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.M) common.PagingData {
 	var usersCollection = getUsersCollection()
 	var users []domain.User
 
@@ -151,7 +151,7 @@ func FindUsersPagingSample(c *gin.Context, page int64, limit int64, filter bson.
 	}
 
 	var payload = struct {
-		Data       []domain.User         `json:"data"`
+		Data       interface{}           `json:"data"`
 		Pagination common.PaginationData `json:"pagination"`
 	}{
 		Pagination: paginatedData.Pagination,

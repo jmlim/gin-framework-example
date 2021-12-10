@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"gin-framework-example/app/common"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -34,9 +33,4 @@ type Address struct {
 type PaymentMethod struct {
 	Name         *string `json:"name"`
 	PaymentToken *string `json:"paymentToken"`
-}
-
-type UserPaging struct {
-	Data       []User                `json:"data"`
-	Pagination common.PaginationData `json:"pagination"`
 }
